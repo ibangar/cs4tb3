@@ -156,13 +156,15 @@ begin
     writeln();
 
     (* print new final states *)
-    for ss in Fp do
+    for i := 0 to Length(Fp) - 1 do
     begin
+        ss := Fp[i];
         for s in ss do
         begin
             write(s);
         end;
-        write(' ');
+        if (i < Length(Fp) - 1) then
+            write(' ');
     end;
     writeln();
 
