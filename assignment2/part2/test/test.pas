@@ -1,16 +1,15 @@
 program arithmetic;
 
-  var x, y, q, r: integer;
+  var x, y, v: integer;
 
-  procedure QuotRem (x, y: integer; var q, r: integer);
-  begin q := 0; r := x;
-    while r >= y do { q*y+r=x and r>=y }
-      begin r := r - y; q := q + 1
-      end
+  procedure Pow (x, y: integer; var v: integer);
+  begin
+    v := x^3^2;
   end;
 
 begin
-  read (x); read (y);
-  QuotRem (x, y, q, r);
-  write (q); write (r); writeln
+  x := 2;
+  y := 2;
+  Pow (x, y, v);
+  write(v);
 end.
