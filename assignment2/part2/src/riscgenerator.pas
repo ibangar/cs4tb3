@@ -157,6 +157,61 @@ implementation
     else merged := L1
   end;
 
+  function power (x, y: integer): integer;
+  begin
+    power := x;
+    while y > 1 do begin power := power * x; y := y - 1 end;
+  end;
+
+  procedure asmPow(var x, y : Item);
+  begin
+      Put(PSHOP, 6, SP, 4);
+      Put(PSHOP, 5, SP, 4);
+      Put(PSHOP, 4, SP, 4);
+      Put(PSHOP, 3, SP, 4);
+      Put(PSHOP, 2, SP, 4);
+      Put(PSHOP, 1, SP, 4);
+
+      if x.mode <> RegClass then loadItem(x);
+      Put(ADDOP, 1, x.r, 0);
+
+      if y.mode = ConstClass then
+      begin
+        TestRange(y.a);
+        Put(ADDIOP, 2, 0, y.a)
+      end
+      else begin
+        if y.mode <> RegClass then loadItem(y);
+        Put(ADDOP, 2, y.r, 0);
+      end;
+
+      Put(ADDOP, 3, 0, 0);
+      Put(ADDIOP, 5, 0, 1);
+      Put(ADDIOP, 6, 0, 1);
+      Put(MODIOP, 4, 2, 2);
+      Put(BNEOP, 4, 5, 2);
+      Put(MULOP, 6, 6, 1);
+      Put(DIVIOP, 2, 2, 2);
+      Put(BEQOP, 2, 3, 3);
+      Put(MULOP, 1, 1, 1);
+      Put(BEQOP, 0, 0, -6);
+      Put(POPOP, 1, SP, 4);
+      Put(POPOP, 2, SP, 4);
+      Put(POPOP, 3, SP, 4);
+      Put(POPOP, 4, SP, 4);
+      Put(POPOP, 5, SP, 4);
+
+      if x.r <> 6 then
+      begin
+        if x.r = 0 then
+        begin
+          GetReg (x.r);
+        end;
+        Put(ADDOP, x.r, 0, 6);
+        Put(POPOP, 6, SP, 4);
+      end;
+  end;
+
   procedure fix (at, fixwith: integer);
   begin {first mask out lower 16 bits}
     code[at] := longint(code[at] and $FFFF0000) or (fixwith and $0000FFFF)
@@ -258,6 +313,7 @@ implementation
         else if op = TimesSym then x.a := x.a * y.a
         else if op = DivSym then x.a := x.a div y.a
         else if op = ModSym then x.a := x.a mod y.a
+        else if op = PowSym then x.a := power(x.a, y.a)
         else Mark ('bad type')
       else
         if op = PlusSym then PutOp (ADDOP, x, y)
@@ -265,6 +321,7 @@ implementation
         else if op = TimesSym then PutOp (MULOP, x, y)
         else if op = DivSym then PutOp (DIVOP, x, y)
         else if op = ModSym then PutOp (MODOP, x, y)
+        else if op = PowSym then asmPow(x, y)
         else Mark ('bad type')
     else if (x.tp^.form = Bool) and (y.tp^.form = Bool) then
       begin

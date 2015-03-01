@@ -8,7 +8,7 @@ uses scanner, symboltable, riscgenerator, risc;
     {first/follow sets}
     MoreExp = [EqlSym, NeqSym, LssSym, GeqSym, LeqSym, GtrSym];
     MoreSimpleExp = [PlusSym, MinusSym, OrSym];
-    MoreTerm = [TimesSym, DivSym, ModSym, AndSym];
+    MoreTerm = [PowSym, TimesSym, DivSym, ModSym, AndSym];
     FirstFactor = [IdentSym, NumberSym, LparenSym, NotSym];
     FollowFactor = [TimesSym, DivSym, ModSym, AndSym, OrSym, PlusSym,
       MinusSym, EqlSym, NeqSym, LssSym, LeqSym, GtrSym, GeqSym, CommaSym,
@@ -74,8 +74,13 @@ uses scanner, symboltable, riscgenerator, risc;
     while sym in MoreTerm do
       begin
         op := sym; GetSym;
+
         if op = AndSym then Op1 (op, x);
-        factor (y); Op2 (op, x, y)
+        if op = PowSym then
+            expression(y)
+        else
+            factor (y);
+        Op2 (op, x, y);
       end
   end;
 
