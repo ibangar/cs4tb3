@@ -5,7 +5,7 @@ interface
     IdLen = 31; {number of significant characters in identifiers}
 
   type
-    Symbol = (null, TimesSym, DivSym, ModSym, AndSym, PlusSym, MinusSym,
+    Symbol = (null, PowSym, TimesSym, DivSym, ModSym, AndSym, PlusSym, MinusSym,
       OrSym, EqlSym, NeqSym, LssSym, GeqSym, LeqSym, GtrSym, PeriodSym,
       CommaSym, ColonSym, RparenSym, RbrakSym, OfSym, ThenSym, DoSym,
       LparenSym, LbrakSym, NotSym, BecomesSym, NumberSym, IdentSym,
@@ -113,6 +113,7 @@ implementation
     if eof (source) then sym := EofSym
     else
       case ch of
+        '^': begin GetChar; sym := PowSym end;
         '*': begin GetChar; sym := TimesSym end;
         '+': begin GetChar; sym := PlusSym end;
         '-': begin GetChar; sym := MinusSym end;
