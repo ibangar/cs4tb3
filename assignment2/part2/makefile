@@ -1,7 +1,6 @@
 default:
 	mkdir -p build
-	fpc scanner.pas -FEbuild
-	fpc analyser.pas -FEbuild
+	fpc src/risccompiler.pas -FEbuild
 
 clean:
 	rm -fr build
