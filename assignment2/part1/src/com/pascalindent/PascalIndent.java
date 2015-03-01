@@ -3,6 +3,7 @@ package com.pascalindent;
 import com.pascalindent.antlr.Pascal0Lexer;
 import com.pascalindent.antlr.Pascal0Parser;
 import com.pascalindent.antlr.Pascal0BaseListener;
+import com.pascalindent.PascalIndentConverter;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
@@ -14,6 +15,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
@@ -54,18 +56,7 @@ public class PascalIndent
         ParseTreeWalker walker = new ParseTreeWalker();
 
         /* walk through the program */
-        walker.walk(new Pascal0BaseListener()
-        {
-            public void enterProgram(Pascal0Parser.ProgramContext ctx)
-            {
-
-            }
-
-            public void exitProgram(Pascal0Parser.ProgramContext ctx)
-            {
-
-            }
-        }, program);
+        walker.walk(new PascalIndentConverter(mOutput), program);
     }
 
     public static final void main(String[] args)
