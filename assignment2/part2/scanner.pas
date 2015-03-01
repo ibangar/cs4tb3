@@ -21,6 +21,7 @@ interface
     error: Boolean; {whether an error has occurred so far}
 
   procedure Mark (msg: string);
+  procedure warn (msg: string);
 
   procedure GetSym;
 
@@ -35,8 +36,8 @@ implementation
 
   var
     ch: char;
-    line, lastline, errline: integer;
-    pos, lastpos, errpos: integer;
+    line, lastline, errline, warnline: integer;
+    pos, lastpos, errpos, warnpos: integer;
     keyTab: KeyTable;
     fn: string[255]; {name of source file}
     source: text; {source file}
@@ -62,9 +63,14 @@ implementation
 
   procedure Ident;
     var len, k: integer;
-  begin len := 0;
+    var warned : boolean;
+  begin len := 0; warned := false;
     repeat
-      if len < IdLen then begin len := len + 1; id[len] := ch; end;
+      if len >= IdLen then
+      begin
+        if not warned then begin warn('truncating identifier'); warned := true; end;
+      end
+      else begin len := len + 1; id[len] := ch; end;
       GetChar
     until not (ch in  ['A'..'Z', 'a'..'z', '0'..'9']);
     setlength(id, len); k := 1;
@@ -77,7 +83,11 @@ implementation
     while (not eof (source)) and (ch <> '}') do
     begin
         GetChar;
-        if (ch = '{') then comment;
+        if (ch = '{') then
+        begin
+            warn('nested comment.');
+            comment;
+        end;
     end;
     if eof (source) then Mark ('comment not terminated')
     else GetChar;
@@ -88,6 +98,13 @@ implementation
     if (lastline > errline) or (lastpos > errpos) then
       writeln ('error: line ', lastline:1, ' pos ', lastpos:1, ' ', msg);
     errline := lastline; errpos := lastpos; error := true
+  end;
+
+  procedure warn (msg: string);
+  begin
+    if (lastline > warnline) or (lastpos > warnpos) then
+      writeln ('warning: line ', lastline:1, ' pos ', lastpos:1, ' ', msg);
+    warnline := lastline; warnpos := lastpos;
   end;
 
   procedure GetSym;
