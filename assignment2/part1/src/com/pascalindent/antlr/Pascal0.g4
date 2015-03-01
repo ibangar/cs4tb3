@@ -13,7 +13,7 @@ assignment          : Ident selector ':=' expression ;
 actualparameters    : '(' (expression (',' expression)*)? ')' ;
 procedurecall       : Ident selector (actualparameters)? ;
 compoundstatement   : 'begin' statement (';' statement)* 'end' ;
-ifstatement         : 'if' statement 'then' statement ('else' statement)? ;
+ifstatement         : 'if' expression 'then' statement ('else' statement)? ;
 whilestatement      : 'while' expression 'do' statement ;
 statement           : (assignment | procedurecall | compoundstatement | ifstatement | whilestatement) ;
 
