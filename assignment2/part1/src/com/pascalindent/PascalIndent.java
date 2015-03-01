@@ -8,14 +8,19 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.List;
 
 public class PascalIndent
 {
     InputStream mInput;
+    OutputStream mOutput;
     CharStream mCharStream;
 
     Pascal0Lexer mLexer;
@@ -23,16 +28,20 @@ public class PascalIndent
 
     public PascalIndent(String[] args)
     {
-        /* open file */
-        System.out.println(args[0]);
+        /* open input and output files */
         try
         {
+            /* open input file */
             mInput = new FileInputStream(new File(args[0]));
             mCharStream = new ANTLRInputStream(mInput);
+
+            /* open output file */
+            mOutput = new FileOutputStream(new File(args[1]));
         }
         catch (Exception e)
         {
-            System.out.println("Failed to open file and created CharStream : " + e.getMessage());
+            System.out.println("Failed to open input/output files : " + e.getMessage());
+            return;
         }
 
         /* create lexer and parser */
@@ -40,14 +49,21 @@ public class PascalIndent
         CommonTokenStream tokenStream = new CommonTokenStream(mLexer);
         mParser = new Pascal0Parser(tokenStream);
 
-        /* walk the program */
+        /* create walker */
         Pascal0Parser.ProgramContext program = mParser.program();
         ParseTreeWalker walker = new ParseTreeWalker();
 
-        walker.walk(new Pascal0BaseListener() {
+        /* walk through the program */
+        walker.walk(new Pascal0BaseListener()
+        {
             public void enterProgram(Pascal0Parser.ProgramContext ctx)
             {
-                System.out.println("enter program");
+
+            }
+
+            public void exitProgram(Pascal0Parser.ProgramContext ctx)
+            {
+
             }
         }, program);
     }
