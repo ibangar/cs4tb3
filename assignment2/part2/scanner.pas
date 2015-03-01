@@ -74,7 +74,11 @@ implementation
 
   procedure comment;
   begin GetChar;
-    while (not eof (source)) and (ch <> '}') do GetChar;
+    while (not eof (source)) and (ch <> '}') do
+    begin
+        GetChar;
+        if (ch = '{') then comment;
+    end;
     if eof (source) then Mark ('comment not terminated')
     else GetChar;
   end;
